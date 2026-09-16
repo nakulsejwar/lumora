@@ -1,124 +1,89 @@
 "use client";
-import { Card, CardContent } from "@/components/ui/card";
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import React from "react";
+import { Flame, Star, Sparkles } from "lucide-react";
 import dayjs from "dayjs";
-interface UserStreak {
-  streak_data: {
-    highest_streak: number;
-    current_streak: number;
-    last_played_game: string;
-    last_played_at: string;
+
+interface UserStreakData {
+  streak_data?: {
+    highest_streak?: number;
+    current_streak?: number;
+    last_played_game?: string;
+    last_played_at?: string;
   };
-  dates: [
-    {
-      id: number;
-      date: string;
-    }
-  ];
+  dates?: Array<{
+    id: number;
+    date: string;
+  }>;
 }
+
 interface UserStreakProps {
-  data: UserStreak;
+  data?: UserStreakData | null;
 }
-function UserStreak({ data }: UserStreakProps) {
-  const [streak, setStreak] = useState(0);
-  const [canContinueStreak, setCanContinueStreak] = useState(false);
 
-  // const getStreak = () => {
-  //   const today = new Date();
-  //   const formattedToday = today.toISOString().split("T")[0];
-  //   const last7Days = Array.from({ length: 7 }, (_, i) => {
-  //     const date = new Date(today);
-  //     date.setDate(date.getDate() - i);
-  //     return date.toISOString().split("T")[0];
-  //   });
-
-  //   const dates = data.map((entry) => entry.date);
-  //   let currentStreak = 0;
-  //   let missedDay = false;
-
-  //   for (let i = 0; i < last7Days.length; i++) {
-  //     if (dates.includes(last7Days[i])) {
-  //       currentStreak++;
-  //     } else if (i === 0) {
-  //       // If today's date is missing, check if we can continue the streak
-  //       missedDay = true;
-  //     } else if (!missedDay) {
-  //       missedDay = true;
-  //     } else {
-  //       break;
-  //     }
-  //   }
-
-  //   if (dates.includes(formattedToday)) {
-  //     setCanContinueStreak(false); // No need to continue streak message if today's date is included
-  //   } else if (missedDay) {
-  //     setCanContinueStreak(true); // Allow continuation if there's exactly one missed day including today
-  //   }
-
-  //   setStreak(currentStreak);
-  //   setStreak(currentStreak);
-  // };
-
-  // useEffect(() => {
-  //   if (data) {
-  //     getStreak();
-  //   }
-  //   //eslint-disable-next-line
-  // }, [data]);
+export default function UserStreak({ data }: UserStreakProps) {
+  const highestStreak = data?.streak_data?.highest_streak ?? 0;
+  const currentStreak = data?.streak_data?.current_streak ?? 0;
+  const lastPlayedAt = data?.streak_data?.last_played_at ?? "";
 
   const isYesterday = (date: string): boolean => {
-    const yesterday = dayjs().subtract(1, "day").startOf("day"); // Get the start of yesterday
-    const inputDate = dayjs(date).startOf("day"); // Get the start of the input date
-    return yesterday.isSame(inputDate, "day"); // Check if the dates are the same
+    if (!date) return false;
+    const yesterday = dayjs().subtract(1, "day").startOf("day");
+    const inputDate = dayjs(date).startOf("day");
+    return yesterday.isSame(inputDate, "day");
   };
-  const isMoreThanOneDayAgo = (date: string): boolean => {
-    const twoDaysAgo = dayjs().subtract(1, "day").endOf("day"); // Get the end of the day two days ago
-    const inputDate = dayjs(date).endOf("day"); // Get the end of the input date
-    return inputDate.isBefore(twoDaysAgo); // Check if the input date is before the end of the day two days ago
-  };
+
+  const showReminder = isYesterday(lastPlayedAt);
+
   return (
-    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-center gap-3 mt-5 w-full max-w-2xl mx-auto">
-      <div className=" w-full   max-w-xs mx-auto">
-        <motion.div
-          className="animate-fade-up custom-gradient-v2 rounded-lg p-[1px] text-sm md:text-base font-display font-bold  w-full  max-w-xs mx-auto  drop-shadow-sm [text-wrap:balance] "
-          style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}
-        >
-          <Card className="w-full border border-blue-200 max-w-xs ">
-            <CardContent className="flex  justify-between !p-2 ">
-              <p className=" font-medium"> 🔥 Highest Streak :</p>
-              <p className="">
-                {data.streak_data.highest_streak}{" "}
-                {data.streak_data.current_streak === 1 ? "day" : "days"}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-        {isYesterday(data.streak_data.last_played_at) && (
-          <p className="p-1">Continue today to save your streak!</p>
-        )}
+    <div className="w-full bg-white rounded-3xl p-6 border border-[#c8c5d0]/60 shadow-md">
+      {/* Card Header */}
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#c8c5d0]/40">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-[#fe932c]/15 text-[#fe932c] flex items-center justify-center font-bold">
+            <Flame className="w-5 h-5 fill-[#fe932c]" />
+          </div>
+          <div>
+            <h3 className="font-extrabold text-[#070235] text-sm sm:text-base">Reading Flame & Streaks</h3>
+            <p className="text-[11px] text-[#47464f]">Daily learning consistency & streak records.</p>
+          </div>
+        </div>
+        <span className="text-[10px] font-mono font-extrabold uppercase text-[#904d00] bg-[#fe932c]/15 px-2.5 py-1 rounded-full border border-[#fe932c]/30">
+          DAILY STREAK
+        </span>
       </div>
-      <div className=" w-full   max-w-xs mx-auto">
-        <motion.div
-          className="animate-fade-up custom-gradient-v2 rounded-lg p-[1px] text-sm md:text-base font-display font-bold  w-full  max-w-xs mx-auto  drop-shadow-sm [text-wrap:balance] "
-          style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}
-        >
-          <Card className="w-full border border-blue-200 max-w-xs ">
-            <CardContent className="flex  justify-between !p-2 ">
-              <p className=" font-medium"> 🔥 Current Streak :</p>
-              <p className="">
-                {data.streak_data.current_streak}{" "}
-                {data.streak_data.current_streak === 1 ? "day" : "days"}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-        {isYesterday(data.streak_data.last_played_at) && (
-          <p className="p-1">Continue today to save your streak!</p>
-        )}
+
+      {/* Metrics Row */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Highest Streak */}
+        <div className="p-4 rounded-2xl bg-[#faf8ff] border border-[#c8c5d0]/40 flex flex-col items-center text-center">
+          <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#47464f] mb-1">
+            <Star className="w-3.5 h-3.5 text-[#fe932c] fill-[#fe932c]" />
+            <span>Highest Record</span>
+          </div>
+          <span className="text-2xl sm:text-3xl font-extrabold text-[#070235]">
+            {highestStreak} <span className="text-xs font-semibold text-[#47464f]">{highestStreak === 1 ? "day" : "days"}</span>
+          </span>
+        </div>
+
+        {/* Current Streak */}
+        <div className="p-4 rounded-2xl bg-[#fe932c]/10 border border-[#fe932c]/30 flex flex-col items-center text-center">
+          <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#904d00] mb-1">
+            <Flame className="w-3.5 h-3.5 text-[#fe932c] fill-[#fe932c]" />
+            <span>Current Streak</span>
+          </div>
+          <span className="text-2xl sm:text-3xl font-extrabold text-[#070235]">
+            {currentStreak} <span className="text-xs font-semibold text-[#47464f]">{currentStreak === 1 ? "day" : "days"}</span>
+          </span>
+        </div>
       </div>
+
+      {/* Status Reminder Footer */}
+      {showReminder && (
+        <div className="mt-4 p-3 rounded-xl bg-[#fe932c]/15 border border-[#fe932c]/40 flex items-center gap-2 text-xs font-semibold text-[#904d00]">
+          <Sparkles className="w-4 h-4 text-[#fe932c] shrink-0" />
+          <span>Keep your flame burning! Complete a mission today to extend your streak!</span>
+        </div>
+      )}
     </div>
   );
 }
-
-export default UserStreak;
