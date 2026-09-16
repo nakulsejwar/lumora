@@ -139,7 +139,7 @@ const LoadingQuestions = ({ title, topic }: Props) => {
       <div className="w-full p-3 rounded-xl bg-[#070235]/5 border border-[#070235]/10 flex items-center gap-2.5 text-xs text-[#070235]">
         <Sparkles className="w-4 h-4 text-[#fe932c] shrink-0" />
         <p className="italic text-left text-[11px] font-medium text-[#47464f] transition-opacity duration-300">
-          "{LOADING_FACTS[factIndex]}"
+          &quot;{LOADING_FACTS[factIndex]}&quot;
         </p>
       </div>
     </div>
