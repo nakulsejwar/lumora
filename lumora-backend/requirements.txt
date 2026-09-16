@@ -13,7 +13,7 @@ boto3==1.34.14
 botocore==1.34.14
 Brotli==1.1.0
 cachetools==5.3.2
-certifi==2018.10.15
+certifi>=2023.7.22
 cffi==1.15.1
 channels==3.0.1
 channels-redis==4.1.0
@@ -36,7 +36,6 @@ django-extensions==3.1.3
 django-storages==1.7.1
 django-utils-six==2.0
 djangorestframework==3.14.0
-djangorestframework-jwt==1.11.0
 djangorestframework-simplejwt==4.7.2
 docutils==0.14
 dotenv==0.9.9
@@ -71,7 +70,7 @@ httpcore==1.0.9
 httplib2==0.22.0
 httpx==0.28.1
 hyperlink==19.0.0
-idna==2.7
+idna>=2.10
 importlib-metadata==6.6.0
 incremental==22.10.0
 itsdangerous==2.1.2
@@ -117,14 +116,14 @@ pycryptodome==3.16.0
 pydantic==2.12.5
 pydantic_core==2.41.5
 PyHamcrest==1.9.0
-PyJWT==1.7.1
+PyJWT>=2.0.0
 PyMySQL==1.0.2
 pyOpenSSL==24.1.0
 pyparsing==3.1.1
-python-dateutil==2.8.0
+python-dateutil>=2.8.2,<3.0.0
 python-dotenv==0.21.1
 python-jose==3.4.0
-pytz==2019.2
+pytz>=2023.3
 pywin32==311; sys_platform == 'win32'
 PyYAML==6.0.3
 pyzmq==26.0.3
@@ -157,7 +156,7 @@ tzdata==2025.3
 tzlocal==2.1
 update-checker==0.18.0
 uritemplate==4.1.1
-urllib3==1.26.20
+urllib3>=1.26.20,<3.0.0
 uuid_utils==0.14.1
 websocket-client==1.6.1
 websockets==15.0.1
