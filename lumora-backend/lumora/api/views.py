@@ -46,7 +46,6 @@ from requests.exceptions import ConnectionError, HTTPError
 from django.contrib.auth.decorators import login_required
 import os
 import json
-from core.api import jwt
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 

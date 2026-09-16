@@ -257,7 +257,7 @@ REST_FRAMEWORK = {
     ),
 
     'DEFAULT_PERMISSION_CLASSES': (
-        'core.api.permissions.DenyAny',
+        'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'lumora.authentication.BearerTokenAuthentication',
