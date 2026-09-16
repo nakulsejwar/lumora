@@ -61,7 +61,7 @@ redis==4.5.4
 service-identity==21.1.0
 twisted==23.8.0
 txaio==18.8.1
-typing-extensions==4.5.0
+typing-extensions>=4.10.0
 zipp==3.15.0
 google-api-core
 google-api-python-client==2.99.0
@@ -74,4 +74,4 @@ scikit-learn
 charset-normalizer==3.3.2
 update-checker==0.18.0
 websocket-client==1.6.1
-openai>=1.0.0
+openai>=1.0.0,<=2.32.0
