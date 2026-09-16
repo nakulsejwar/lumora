@@ -5159,18 +5159,25 @@ class RequestPasswordResetOTPView(APIView):
             f"Best regards,\nThe Lumora Team"
         )
 
-        try:
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[user_email],
-                fail_silently=False,
-            )
-            logging.info(f"[OTP RESET] Sent reset OTP code to {user_email}")
-        except Exception as e:
-            logging.error(f"[OTP RESET] Failed to send email to {user_email}: {e}")
-            return Response({"error": "Failed to send email. Please check server network configuration."}, status=500)
+        def _send_async_mail(sub, msg, sender, recipients):
+            try:
+                send_mail(
+                    subject=sub,
+                    message=msg,
+                    from_email=sender,
+                    recipient_list=recipients,
+                    fail_silently=False,
+                )
+                logging.info(f"[OTP RESET] Sent reset OTP code to {recipients}")
+            except Exception as e:
+                logging.error(f"[OTP RESET] Failed to send email to {recipients}: {e}")
+
+        import threading
+        threading.Thread(
+            target=_send_async_mail,
+            args=(subject, message, settings.EMAIL_HOST_USER, [user_email]),
+            daemon=True
+        ).start()
 
         return Response(response_msg)
 
