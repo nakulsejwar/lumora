@@ -82,7 +82,42 @@ export const getCurrentUser = async () => {
 // Mocks for unused auth flows
 export const confirmSignUp = async (...args: any[]) => ({});
 export const resendSignUpCode = async (...args: any[]) => ({});
-export const resetPassword = async (...args: any[]) => ({});
-export const confirmResetPassword = async (...args: any[]) => ({});
+export const resetPassword = async ({ username }: { username: string }) => {
+  const res = await fetch(`${API_BASE_URL}/request-password-reset-otp/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: username }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new AuthError(data.error || data.detail || "Failed to send reset OTP code");
+  }
+  return data;
+};
+
+export const confirmResetPassword = async ({
+  username,
+  confirmationCode,
+  newPassword,
+}: {
+  username: string;
+  confirmationCode: string;
+  newPassword: string;
+}) => {
+  const res = await fetch(`${API_BASE_URL}/verify-password-reset-otp/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: username,
+      otp: confirmationCode,
+      password: newPassword,
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new AuthError(data.error || data.detail || "Failed to reset password");
+  }
+  return data;
+};
 export const signInWithRedirect = async (...args: any[]) => ({});
 export type FetchUserAttributesOutput = any;

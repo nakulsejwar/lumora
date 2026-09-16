@@ -23,6 +23,13 @@ const literata = Literata({
 });
 
 export const metadata: Metadata = {
+  title: "Lumora - AI Adaptive Reading Coach",
+  description: "AI Adaptive Reading Coach",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
   metadataBase: new URL("https://www.lumora.app/"),
   openGraph: {
     title: "Lumora",

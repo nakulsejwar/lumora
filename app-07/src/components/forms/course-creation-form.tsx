@@ -78,7 +78,7 @@ const CourseCreationForm = ({ path }: { path?: string }) => {
   };
 
   if (showLoader) {
-    return <LoadingQuestions />;
+    return <LoadingQuestions topic={form.getValues("topic")} />;
   }
 
   return (

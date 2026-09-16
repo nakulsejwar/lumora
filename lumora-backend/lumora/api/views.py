@@ -5111,3 +5111,107 @@ def get_user_info(request):
         'custom:ReferralCode': 'REF123',
         'identities': '[]'
     })
+
+
+import random
+import logging
+from datetime import timedelta
+from django.conf import settings
+from lumora.models import PasswordResetOTP
+
+class RequestPasswordResetOTPView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email") or request.data.get("username")
+        if not email:
+            return Response({"error": "Email address is required"}, status=400)
+
+        email = email.strip().lower()
+        user = User.objects.filter(email__iexact=email).first() or User.objects.filter(username__iexact=email).first()
+
+        response_msg = {"message": "If an account exists with this email, an OTP code has been sent."}
+
+        if not user:
+            return Response(response_msg)
+
+        user_email = user.email or email
+
+        PasswordResetOTP.objects.filter(email=user_email, is_used=False).update(is_used=True)
+
+        otp_code = str(random.randint(100000, 999999))
+        expires_at = timezone.now() + timedelta(minutes=15)
+
+        PasswordResetOTP.objects.create(
+            email=user_email,
+            otp_code=otp_code,
+            expires_at=expires_at,
+            is_used=False
+        )
+
+        subject = "Lumora - Password Reset OTP Verification Code"
+        message = (
+            f"Hello {user.username},\n\n"
+            f"Your OTP verification code for resetting your Lumora password is:\n\n"
+            f"  {otp_code}\n\n"
+            f"This code will expire in 15 minutes.\n"
+            f"If you did not request a password reset, please ignore this email.\n\n"
+            f"Best regards,\nThe Lumora Team"
+        )
+
+        try:
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user_email],
+                fail_silently=False,
+            )
+            logging.info(f"[OTP RESET] Sent reset OTP code to {user_email}")
+        except Exception as e:
+            logging.error(f"[OTP RESET] Failed to send email to {user_email}: {e}")
+            return Response({"error": "Failed to send email. Please check server network configuration."}, status=500)
+
+        return Response(response_msg)
+
+
+class VerifyPasswordResetOTPView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email") or request.data.get("username")
+        otp_code = request.data.get("otp") or request.data.get("code") or request.data.get("confirmationCode")
+        new_password = request.data.get("password") or request.data.get("newPassword")
+
+        if not email or not otp_code or not new_password:
+            return Response({"error": "Email, verification code, and new password are required."}, status=400)
+
+        email = str(email).strip().lower()
+        otp_code = str(otp_code).strip()
+
+        matching_users = User.objects.filter(Q(email__iexact=email) | Q(username__iexact=email))
+        if not matching_users.exists():
+            return Response({"error": "Invalid verification code or email."}, status=400)
+
+        user_email = matching_users.first().email or email
+
+        otp_entry = PasswordResetOTP.objects.filter(
+            email=user_email,
+            otp_code=otp_code,
+            is_used=False,
+            expires_at__gte=timezone.now()
+        ).first()
+
+        if not otp_entry:
+            return Response({"error": "Invalid or expired verification code."}, status=400)
+
+        otp_entry.is_used = True
+        otp_entry.save()
+
+        for u in matching_users:
+            u.set_password(new_password)
+            u.save()
+
+        logging.info(f"[OTP RESET] Successfully reset password for {user_email}")
+        return Response({"message": "Password reset successfully. You can now login with your new password."})
+

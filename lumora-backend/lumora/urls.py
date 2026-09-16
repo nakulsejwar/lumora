@@ -115,4 +115,6 @@ urlpatterns = [
     path('fetch-admin-blogs/', views.FetchAdminBlogs.as_view(), name='fetch-admin-blogs'),
     path('fetch-blog-by-id/', views.FetchBlogbyId.as_view(), name='fetch-blog-by-id'),
     path('fetch-blogs/', views.FetchBlogs.as_view(), name='fetch-blogs'),
+    path('request-password-reset-otp/', views.RequestPasswordResetOTPView.as_view(), name='request-password-reset-otp'),
+    path('verify-password-reset-otp/', views.VerifyPasswordResetOTPView.as_view(), name='verify-password-reset-otp'),
 ]

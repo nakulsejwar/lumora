@@ -78,7 +78,7 @@ const CreateCourseFromTextForm = ({ path }: { path?: string }) => {
   };
 
   if (showLoader) {
-    return <LoadingQuestions />;
+    return <LoadingQuestions title="Transforming Text into Course" />;
   }
 
   return (

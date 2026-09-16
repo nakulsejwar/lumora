@@ -92,7 +92,7 @@ const BulkCourseCreationForm = () => {
   };
 
   if (showLoader) {
-    return <LoadingQuestions />;
+    return <LoadingQuestions title="Processing Bulk Courses" />;
   }
 
   return (

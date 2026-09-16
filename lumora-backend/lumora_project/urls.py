@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
-from lumora.api.views import RegisterUser, LoginUser, get_user_info
+from lumora.api.views import RegisterUser, LoginUser, get_user_info, RequestPasswordResetOTPView, VerifyPasswordResetOTPView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +25,6 @@ urlpatterns = [
     path('api/register/', RegisterUser.as_view(), name='register'),
     path('api/login/', LoginUser.as_view(), name='login'),
     path('api/me/', get_user_info, name='me'),
+    path('api/request-password-reset-otp/', RequestPasswordResetOTPView.as_view(), name='request-password-reset-otp'),
+    path('api/verify-password-reset-otp/', VerifyPasswordResetOTPView.as_view(), name='verify-password-reset-otp'),
 ]

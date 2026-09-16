@@ -303,3 +303,14 @@ class Book(models.Model):
 
     class Meta:
         db_table = 'lumora_books'
+
+
+class PasswordResetOTP(models.Model):
+    email = models.CharField(max_length=255)
+    otp_code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'lumora_password_reset_otp'

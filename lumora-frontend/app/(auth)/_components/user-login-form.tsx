@@ -5,6 +5,7 @@ import { z } from "zod";
 import { cn } from "@/lib/utils";
 import Zoom from "@mui/material/Zoom";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -97,6 +98,12 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               <label htmlFor="password">
                 Password <span className="text-amber-600">*</span>
               </label>
+              <Link
+                href="/resetpassword"
+                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline normal-case"
+              >
+                Forgot password?
+              </Link>
             </div>
 
             <div className="flex items-center justify-between border border-slate-200 bg-[#faf8ff] w-full rounded-xl focus-within:ring-2 focus-within:ring-indigo-600 focus-within:border-transparent text-sm">

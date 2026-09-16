@@ -4,30 +4,38 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const { pathname } = request.nextUrl;
 
-  // Mock authentication check for local system
+  // Authentication check for session cookie
   const authenticated = request.cookies.has("local_auth");
 
-  // Public unauthenticated whitelist: ONLY explicit login/auth pages or static asset pages
+  // Exact public pages allowed without login
+  const isExactPublicPage =
+    pathname === "/" ||
+    pathname === "/privacy-policy" ||
+    pathname === "/about-us" ||
+    pathname === "/favicon.ico";
+
+  // Public auth & static asset prefixes
   const publicPrefixes = [
     "/login",
     "/register",
     "/resetpassword",
     "/newpassword",
     "/verifyemail",
-    "/privacy-policy",
-    "/about-us",
     "/api",
     "/_next",
-    "/favicon.ico",
     "/images",
-    "/"
   ];
 
-  const isPublicRoute = publicPrefixes.some(
-    (prefix) => pathname === prefix || pathname.startsWith(prefix)
+  const isPublicPrefix = publicPrefixes.some(
+    (prefix) =>
+      pathname === prefix ||
+      pathname.startsWith(prefix + "/") ||
+      pathname.startsWith(prefix + "?")
   );
 
-  // STRICT AUTH WALL: If not authenticated and attempting to access ANY feature, game, course, library, or page outside public whitelist -> REDIRECT TO LOGIN IMMEDIATELY
+  const isPublicRoute = isExactPublicPage || isPublicPrefix;
+
+  // STRICT AUTH WALL: If not authenticated and trying to access ANY course, game, library, score, or feature page -> REDIRECT TO LOGIN IMMEDIATELY
   if (!authenticated && !isPublicRoute) {
     const loginUrl = new URL("/login", request.url);
     if (pathname && pathname !== "/") {
