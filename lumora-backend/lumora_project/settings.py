@@ -115,6 +115,7 @@ CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:8000",
     "https://lumoraapp.vercel.app",
     "https://admin-lumora.vercel.app",
+    "https://lumora-backend.up.railway.app",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -125,10 +126,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://lumoraapp.vercel.app",
     "https://admin-lumora.vercel.app",
+    "https://lumora-backend.up.railway.app",
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r'^https://.*\.vercel\.app$',
+    r'^https://.*\.railway\.app$',
+    r'^https://.*\.up\.railway\.app$',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -141,6 +145,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://lumoraapp.vercel.app",
     "https://admin-lumora.vercel.app",
+    "https://lumora-backend.up.railway.app",
 ]
 
 
