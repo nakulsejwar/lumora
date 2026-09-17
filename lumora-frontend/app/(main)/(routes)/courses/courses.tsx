@@ -57,6 +57,10 @@ function Courses() {
           },
         });
 
+        if (Array.isArray(data)) {
+          return data.filter((course: any) => course?.live?.toLowerCase() !== "no");
+        }
+
         return data;
       } catch (error) {
         return null;
@@ -66,11 +70,15 @@ function Courses() {
 
   React.useEffect(() => {
     if (!coursesData) return;
+    const activeCourses = Array.isArray(coursesData)
+      ? coursesData.filter((course: any) => course?.live?.toLowerCase() !== "no")
+      : [];
+
     if (!searchQuery.trim()) {
-      setFilteredCourses(coursesData);
+      setFilteredCourses(activeCourses);
     } else {
       const query = searchQuery.toLowerCase();
-      const filtered = coursesData.filter(
+      const filtered = activeCourses.filter(
         (course: any) =>
           course.name.toLowerCase().includes(query) ||
           (course.course_tip && course.course_tip.toLowerCase().includes(query)) ||
