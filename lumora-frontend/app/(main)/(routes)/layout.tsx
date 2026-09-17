@@ -4,7 +4,7 @@ import AdBanner from "@/components/google-ads-banner";
 
 const RouteLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <div>
+    <div className="pb-20 sm:pb-0">
       <Navbar />
       <div className="flex justify-center max-w-7xl mx-auto">
         <div className="hidden xl:block my-12  min-w-[180px] ">

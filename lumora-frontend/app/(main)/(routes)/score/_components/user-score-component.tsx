@@ -149,10 +149,10 @@ function UserScoreComponent() {
   const topCourses = data?.top_courses?.filter((course: any) => course.course_name !== null) || [];
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8 sm:py-12 animate-in fade-in duration-300">
+    <div className="flex min-h-screen w-full flex-col my-8 max-w-6xl mx-auto px-4 sm:px-6">
       {/* HEADER BANNER */}
       <div className="text-center mb-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#070235] text-[#89ceff] text-xs font-mono font-extrabold uppercase tracking-widest shadow-xs mb-3 border border-[#0091cf]/40">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#eaedff] border border-[#0091cf]/30 text-[#070235] text-xs font-mono font-extrabold uppercase tracking-widest mb-3">
           <Trophy className="w-3.5 h-3.5 text-[#fe932c]" />
           <span>LUMORA ACCOMPLISHMENTS • SCORE CARD</span>
         </div>

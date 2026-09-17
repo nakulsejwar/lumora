@@ -33,11 +33,6 @@ export default function page() {
               Return to your reading missions, track your 6 comprehension skills, and experience AI-adaptive coaching.
             </p>
           </div>
-
-          <div className="pt-8 border-t border-[#0091cf]/30 flex items-center gap-3 text-xs text-[#89ceff]">
-            <ShieldCheck className="w-4 h-4 text-[#059669] shrink-0" />
-            <span>Encrypted & secure student session</span>
-          </div>
         </div>
 
         {/* Right / Form Area */}

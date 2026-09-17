@@ -107,10 +107,10 @@ const ProfileComponent = () => {
   const currentImage = authUser.image || userAvatar || "https://images.pexels.com/photos/256455/pexels-photo-256455.jpeg";
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8 sm:py-12 animate-in fade-in duration-300">
+    <div className="flex min-h-screen w-full flex-col my-8 max-w-6xl mx-auto px-4 sm:px-6">
       {/* HEADER BANNER */}
       <div className="text-center mb-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#070235] text-[#89ceff] text-xs font-mono font-extrabold uppercase tracking-widest shadow-xs mb-3 border border-[#0091cf]/40">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#eaedff] border border-[#0091cf]/30 text-[#070235] text-xs font-mono font-extrabold uppercase tracking-widest mb-3">
           <Sparkles className="w-3.5 h-3.5 text-[#fe932c]" />
           <span>LUMORA BUREAU • DETECTIVE PROFILE</span>
         </div>
@@ -337,11 +337,10 @@ const ProfileComponent = () => {
                     <div
                       key={item.id}
                       onClick={() => setSelectedAvatar(item.url)}
-                      className={`relative rounded-2xl p-2 cursor-pointer transition-all duration-200 flex items-center justify-center ${
-                        isSelected
+                      className={`relative rounded-2xl p-2 cursor-pointer transition-all duration-200 flex items-center justify-center ${isSelected
                           ? "bg-[#070235] ring-4 ring-[#fe932c] scale-105 shadow-md"
                           : "bg-[#faf8ff] hover:bg-[#eaedff] border border-[#c8c5d0]/40"
-                      }`}
+                        }`}
                     >
                       <Image
                         src={item.url}

@@ -30,7 +30,7 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en">
-        <body className={cn(inter.className, "antialiased min-h-screen bg-[#faf8ff] text-[#131b2e] selection:bg-[#fe932c]/30 font-sans")}>
+        <body className={cn(inter.className, "antialiased min-h-screen bg-[#faf8ff] text-[#131b2e] selection:bg-[#fe932c]/30 font-sans pb-20 sm:pb-0")}>
           <QueryProvider>
             <Navbar />
             {children}

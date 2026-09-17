@@ -61,23 +61,17 @@ export default function Library() {
 
   return (
     <div className="flex min-h-screen w-full flex-col my-8 max-w-6xl mx-auto px-4 sm:px-6">
-      {/* HEADER SECTION */}
-      <div className="mb-10 text-center sm:text-left border-b border-[#c8c5d0]/40 pb-8">
-        <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
-          <div className="w-9 h-9 rounded-xl bg-[#070235] flex items-center justify-center text-[#fe932c] shadow-sm">
-            <BookOpen className="w-5 h-5" />
-          </div>
-          <span className="text-xs font-mono font-extrabold text-[#904d00] tracking-widest uppercase bg-[#fe932c]/15 px-2.5 py-1 rounded border border-[#fe932c]/30">
-            Reading Collection
-          </span>
+      <div className="text-center max-w-2xl mx-auto mb-8">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#eaedff] border border-[#0091cf]/30 text-[#070235] text-xs font-mono font-extrabold uppercase tracking-widest mb-3">
+          <BookOpen className="w-4 h-4 text-[#fe932c]" />
+          <span>READING COLLECTIONS</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-[#070235] tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-[#070235] tracking-tight leading-tight">
           Lumora Library
         </h1>
-        <p className="mt-2 text-sm sm:text-base text-[#47464f] max-w-2xl">
+        <p className="text-sm sm:text-base text-[#47464f] mt-2 font-medium">
           Explore curated digital books, interactive stories, and reading passages designed to build vocabulary, critical thinking, and comprehension mastery.
         </p>
-
         {/* GENRE FILTER BADGES */}
         <div className="mt-6 flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1.5 text-xs font-bold text-[#47464f] mr-2">
