@@ -23,6 +23,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import UserStreak from "./user-streak";
+import SkillMasteryPanel from "@/app/(main)/_components/mastery/skill-mastery-panel";
 
 function UserScoreComponent() {
   const queryclient = useQueryClient();
@@ -265,6 +266,9 @@ function UserScoreComponent() {
               </div>
             )}
           </div>
+
+          {/* ADAPTIVE SKILL ANALYSIS & ADAPTIVE LESSON GENERATOR */}
+          <SkillMasteryPanel />
 
           {/* FOOTER ACTIONS BAR */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">

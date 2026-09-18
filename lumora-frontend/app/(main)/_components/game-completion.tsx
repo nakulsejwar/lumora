@@ -242,17 +242,8 @@ const GameCompletion = () => {
           )}
         </div>
 
-        {/* Skill Mastery Profile & Before-After Growth Panel */}
-        {![
-          "Sug0916",
-          "Wat3581",
-          "Cal3334",
-          "Fib4080",
-          "Fat5747",
-          "Pro0742",
-          "Car9360",
-          "Hea8072",
-        ].includes(game.GameId) && <SkillMasteryPanel />}
+        {/* Skill Mastery Profile & Adaptive Lesson Generator Panel */}
+        <SkillMasteryPanel />
 
         {/* Action Controls Cluster */}
         <div className="flex flex-wrap items-center justify-center gap-4 pt-4 border-t border-[#c8c5d0]/50 w-full">

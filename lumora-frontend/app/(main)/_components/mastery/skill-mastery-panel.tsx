@@ -15,7 +15,19 @@ import {
   pickFocusSkill,
   SkillTag,
 } from "@/lib/skill-info";
-import { Sparkles, Target, ArrowDown, TrendingUp, TrendingDown, Minus, CheckCircle2, Award, Brain, ArrowRight } from "lucide-react";
+import {
+  Sparkles,
+  Target,
+  ArrowDown,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  CheckCircle2,
+  Award,
+  Brain,
+  ArrowRight,
+  Loader2,
+} from "lucide-react";
 
 const SkillBar = ({
   row,
@@ -25,17 +37,21 @@ const SkillBar = ({
   isFocus: boolean;
 }) => {
   const tag = row?.skill_tag;
-  const label = tag ? SKILL_INFO[tag].label : "";
+  const label = tag ? SKILL_INFO[tag]?.label : "";
   const notAssessed = !row || row.attempts === 0;
 
   return (
     <div
       className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl transition-all ${
-        isFocus ? "bg-[#eaedff] border-2 border-[#fe932c] shadow-sm" : "hover:bg-[#f2f3ff]"
+        isFocus
+          ? "bg-[#eaedff] border-2 border-[#fe932c] shadow-sm"
+          : "hover:bg-[#f2f3ff]"
       }`}
     >
-      <span className="w-32 sm:w-40 shrink-0 text-sm font-bold text-[#070235] flex items-center gap-2">
-        {isFocus && <Target className="w-4 h-4 text-[#fe932c] shrink-0 animate-pulse" />}
+      <span className="w-32 sm:w-44 shrink-0 text-xs sm:text-sm font-bold text-[#070235] flex items-center gap-2">
+        {isFocus && (
+          <Target className="w-4 h-4 text-[#fe932c] shrink-0 animate-pulse" />
+        )}
         {label}
       </span>
 
@@ -56,7 +72,9 @@ const SkillBar = ({
 
       <span className="w-20 sm:w-24 shrink-0 text-right text-xs sm:text-sm font-mono font-extrabold text-[#070235]">
         {notAssessed ? (
-          <span className="text-[#787680] font-normal italic text-xs">Unassessed</span>
+          <span className="text-[#787680] font-normal italic text-xs">
+            Unassessed
+          </span>
         ) : (
           `${row!.accuracy}%`
         )}
@@ -77,40 +95,60 @@ const SkillMasteryPanel = () => {
   const queryClient = useQueryClient();
   const { game } = useGameStore();
   const { authUser } = useAuthUserStore();
-  const userId = authUser?.user_id;
+
+  // Resolve userId safely across stores & localStorage fallback
+  const userId =
+    authUser?.user_id ||
+    authUser?.email ||
+    (typeof window !== "undefined"
+      ? localStorage.getItem("user_id") ||
+        localStorage.getItem("userEmail") ||
+        "demo_user"
+      : "demo_user");
 
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [generationFailed, setGenerationFailed] = React.useState(false);
 
-  const { data: mastery, isLoading } = useQuery({
+  const { data: rawMastery, isLoading } = useQuery({
     queryKey: ["skillMastery", userId],
-    queryFn: () => getSkillMastery(userId!),
-    enabled: !!userId,
+    queryFn: () => getSkillMastery(userId),
+    enabled: true,
   });
+
+  // Baseline fallback so panel ALWAYS renders even for new or guest users
+  const defaultMastery: SkillMasteryRow[] = LOCKED_SKILL_TAGS.map((tag) => ({
+    skill_tag: tag,
+    correct: 0,
+    attempts: 0,
+    accuracy: 0,
+  }));
+
+  const mastery =
+    rawMastery && rawMastery.length > 0 ? rawMastery : defaultMastery;
 
   const beforeSkill = searchParams.get("beforeSkill");
   const beforeAccuracyParam = searchParams.get("beforeAccuracy");
   const showBeforeAfter =
-    !!game.target_skill &&
+    !!game?.target_skill &&
     beforeSkill === game.target_skill &&
     beforeAccuracyParam !== null;
 
   const handleBuildNextLesson = async () => {
-    if (isGenerating || !userId) return;
+    if (isGenerating) return;
     setIsGenerating(true);
     setGenerationFailed(false);
 
-    const focusSkill = mastery ? pickFocusSkill(mastery) : null;
-    const beforeRow = mastery?.find((r) => r.skill_tag === focusSkill);
+    const focusSkill = pickFocusSkill(mastery);
+    const beforeRow = mastery.find((r) => r.skill_tag === focusSkill);
 
     const result = await generateNextLesson({
       userId,
-      level_id: game.LevelId || "",
-      grade: game.grade_band || "3",
-      difficulty: game.difficulty || "explicit",
+      level_id: game?.LevelId || "",
+      grade: game?.grade_band || "3",
+      difficulty: game?.difficulty || "explicit",
     });
 
-    if (!result.success) {
+    if (!result.success || !result.game?.gameid) {
       setGenerationFailed(true);
       setIsGenerating(false);
       return;
@@ -131,8 +169,15 @@ const SkillMasteryPanel = () => {
     return <BeforeAfterResult beforeAccuracy={Number(beforeAccuracyParam)} />;
   }
 
-  if (isLoading || !mastery) {
-    return null;
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-2xl mx-auto mt-6 rounded-3xl border border-[#c8c5d0]/70 bg-[#faf8ff] p-8 text-center shadow-lg">
+        <div className="flex items-center justify-center gap-3 text-[#070235]">
+          <Loader2 className="w-6 h-6 animate-spin text-[#fe932c]" />
+          <span className="font-extrabold text-base">Loading Skill Mastery Profile...</span>
+        </div>
+      </div>
+    );
   }
 
   const focusSkill = pickFocusSkill(mastery);
@@ -167,7 +212,7 @@ const SkillMasteryPanel = () => {
       </div>
 
       {/* Focus Skill Card */}
-      {focusSkill && (
+      {focusSkill && SKILL_INFO[focusSkill] && (
         <div className="mb-6 rounded-2xl bg-[#070235] text-white p-5 border border-[#0091cf]/40 shadow-lg relative overflow-hidden">
           <div className="flex items-center gap-2 mb-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-extrabold bg-[#fe932c] text-[#070235] uppercase tracking-wider">
@@ -179,7 +224,11 @@ const SkillMasteryPanel = () => {
             🎯 {SKILL_INFO[focusSkill].label}
           </p>
           <p className="text-xs sm:text-sm text-[#eaedff]/90 mt-1 leading-relaxed">
-            Lumora AI detected that <strong className="text-[#89ceff]">{SKILL_INFO[focusSkill].label.toLowerCase()}</strong> is currently your biggest growth opportunity.
+            Lumora AI detected that{" "}
+            <strong className="text-[#89ceff]">
+              {SKILL_INFO[focusSkill].label.toLowerCase()}
+            </strong>{" "}
+            is currently your biggest growth opportunity.
           </p>
         </div>
       )}
@@ -192,11 +241,12 @@ const SkillMasteryPanel = () => {
               <Target className="w-7 h-7 animate-spin" />
             </div>
             <p className="text-lg font-extrabold text-[#89ceff] tracking-tight">
-              LUMORA IS CREATING A TARGETED CHALLENGE FOR YOU
+              LUMORA IS CREATING A TARGETED ADAPTIVE LESSON
             </p>
-            {focusSkill && (
+            {focusSkill && SKILL_INFO[focusSkill] && (
               <p className="text-xs sm:text-sm text-[#eaedff] max-w-md mx-auto italic leading-relaxed">
-                &quot;Today&apos;s mission is designed to help you {SKILL_INFO[focusSkill].description}.&quot;
+                &quot;Today&apos;s mission is designed to help you{" "}
+                {SKILL_INFO[focusSkill].description}.&quot;
               </p>
             )}
             <div className="pt-4 text-xs font-mono text-[#89ceff] flex flex-wrap justify-center gap-4 border-t border-[#0091cf]/30">
@@ -206,7 +256,7 @@ const SkillMasteryPanel = () => {
             </div>
           </div>
         ) : generationFailed ? (
-          <div className="text-center space-y-3 bg-[#ffdad6] p-4 rounded-2xl border border-[#ba1a1a]/30">
+          <div className="text-center space-y-3 bg-[#ffdad6] p-4 rounded-2xl border border-[#ba1a1a]/30 w-full">
             <p className="text-sm font-bold text-[#93000a]">
               Unable to generate next adaptive lesson.
             </p>
@@ -223,9 +273,8 @@ const SkillMasteryPanel = () => {
           <Button
             variant="theme"
             size="lg"
-            disabled={!userId}
             onClick={handleBuildNextLesson}
-            className="w-full sm:w-auto px-10 py-6 text-base font-extrabold shadow-xl bg-[#070235] hover:bg-[#1e1b4b] text-white rounded-xl border border-[#89ceff]/30 transform hover:scale-[1.02] transition-all flex items-center gap-3"
+            className="w-full sm:w-auto px-10 py-6 text-base font-extrabold shadow-xl bg-[#070235] hover:bg-[#1e1b4b] text-white rounded-xl border border-[#89ceff]/30 transform hover:scale-[1.02] transition-all flex items-center justify-center gap-3 cursor-pointer"
           >
             <span>Build Targeted Adaptive Lesson</span>
             <ArrowRight className="w-5 h-5 text-[#fe932c]" />
@@ -239,25 +288,44 @@ const SkillMasteryPanel = () => {
 const BeforeAfterResult = ({ beforeAccuracy }: { beforeAccuracy: number }) => {
   const { game } = useGameStore();
   const { authUser } = useAuthUserStore();
-  const userId = authUser?.user_id;
-  const targetSkill = game.target_skill as SkillTag | undefined;
+  const userId =
+    authUser?.user_id ||
+    authUser?.email ||
+    (typeof window !== "undefined"
+      ? localStorage.getItem("user_id") ||
+        localStorage.getItem("userEmail") ||
+        "demo_user"
+      : "demo_user");
+  const targetSkill = game?.target_skill as SkillTag | undefined;
 
   const { data: mastery, isLoading } = useQuery({
     queryKey: ["skillMastery", userId],
-    queryFn: () => getSkillMastery(userId!),
-    enabled: !!userId,
+    queryFn: () => getSkillMastery(userId),
+    enabled: true,
   });
 
-  if (isLoading || !mastery || !targetSkill) return null;
+  const defaultMastery: SkillMasteryRow[] = LOCKED_SKILL_TAGS.map((tag) => ({
+    skill_tag: tag,
+    correct: 0,
+    attempts: 0,
+    accuracy: 0,
+  }));
 
-  const afterRow = mastery.find((r) => r.skill_tag === targetSkill);
+  const activeMastery =
+    mastery && mastery.length > 0 ? mastery : defaultMastery;
+
+  if (isLoading || !targetSkill || !SKILL_INFO[targetSkill]) return null;
+
+  const afterRow = activeMastery.find((r) => r.skill_tag === targetSkill);
   const afterAccuracy = afterRow?.accuracy ?? beforeAccuracy;
   const delta = afterAccuracy - beforeAccuracy;
   const improved = delta > 0;
   const declined = delta < 0;
 
   const skillInfo = SKILL_INFO[targetSkill];
-  const rowsByTag = Object.fromEntries(mastery.map((r) => [r.skill_tag, r]));
+  const rowsByTag = Object.fromEntries(
+    activeMastery.map((r) => [r.skill_tag, r])
+  );
 
   return (
     <div className="w-full max-w-2xl mx-auto mt-6 rounded-3xl border border-[#c8c5d0]/70 bg-[#faf8ff] shadow-2xl p-6 sm:p-8 text-center text-[#131b2e]">
@@ -375,4 +443,3 @@ const BeforeAfterResult = ({ beforeAccuracy }: { beforeAccuracy: number }) => {
 };
 
 export default SkillMasteryPanel;
-
