@@ -92,7 +92,7 @@ langsmith==0.4.59
 locust==2.17.0
 MarkupSafe==2.1.5
 msgpack==1.0.0
-mysqlclient==2.2.4
+
 narwhals==2.24.0
 numpy==2.4.3
 oauthlib==3.3.1
@@ -117,7 +117,6 @@ pydantic==2.12.5
 pydantic_core==2.41.5
 PyHamcrest==1.9.0
 PyJWT>=2.0.0
-PyMySQL==1.0.2
 pyOpenSSL==24.1.0
 pyparsing==3.1.1
 python-dateutil>=2.8.2,<3.0.0
