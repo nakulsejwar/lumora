@@ -112,13 +112,9 @@ def upload_to_s3(file_obj, bucket_name, file_name):
 
 @login_required()
 def ImageUpload(request):
-    import pandas as pd
     if request.method == 'POST' and request.FILES.getlist('filenames'):
         file_name_list = []
         link_list = []
-        response = HttpResponse(content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment;filename="Quibblemeimages.xlsx"'
-        writer = pd.ExcelWriter(response, engine='xlsxwriter')
 
         for file_obj in request.FILES.getlist('filenames'):
             file_name = file_obj.name
@@ -126,9 +122,23 @@ def ImageUpload(request):
             file_name_list.append(file_name)
             link_list.append(cloudinary_url)
 
-        d1 = pd.DataFrame({'name': file_name_list, 'link': link_list})
-        d1.to_excel(writer, sheet_name='Image', index=False)
-        writer.save()
+        from io import BytesIO
+        from openpyxl import Workbook
+
+        workbook = Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Image'
+        worksheet.append(['name', 'link'])
+        for file_name, link in zip(file_name_list, link_list):
+            worksheet.append([file_name, link])
+
+        output = BytesIO()
+        workbook.save(output)
+        response = HttpResponse(
+            output.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = 'attachment; filename="Quibblemeimages.xlsx"'
         return response
 
 @api_view(['POST'])
