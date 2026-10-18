@@ -1,5 +1,6 @@
 # Runtime dependencies imported by the Django application.
 Django==3.2.25
+channels==3.0.1
 cloudinary==1.46.2
 dj-database-url==0.5.0
 django-cors-headers==3.2.0
@@ -9,4 +10,5 @@ openpyxl==3.1.2
 psycopg2-binary==2.9.9
 python-dotenv==0.21.1
 requests==2.31.0
+schedule==1.2.2
 whitenoise==6.6.0

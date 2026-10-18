@@ -101,53 +101,26 @@ EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "10"))
 WSGI_APPLICATION = 'lumora_project.wsgi.application'
 
 
-# NOTE: the exact vercel.app subdomains below are a best-guess rename from
-# CORS_ALLOWED_ORIGIN_REGEXES already covers ANY *.vercel.app domain, so CORS
-# itself doesn't depend on getting this exact string right. CSRF_TRUSTED_ORIGINS
-# has no regex equivalent in Django, so if your real Vercel project name differs
-# from "lumora.vercel.app" / "admin-lumora.vercel.app", update these three lists
-# to match your actual deployed domain(s) before relying on any POST from the
-# deployed frontend -- otherwise Django will reject it as a CSRF failure.
-CORS_ORIGIN_WHITELIST = [
+LOCAL_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:3001",
     "http://localhost:3002",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:8000",
-    "https://lumoraapp.vercel.app",
-    "https://admin-lumora.vercel.app",
-    "https://lumora-backend.up.railway.app",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:8000",
-    "https://lumoraapp.vercel.app",
-    "https://admin-lumora.vercel.app",
-    "https://lumora-backend.up.railway.app",
+DEPLOYED_FRONTEND_ORIGINS = [
+    os.getenv("LUMORA_APP_ORIGIN", "https://lumoraapp.vercel.app").rstrip("/"),
+    os.getenv("LUMORA_ADMIN_ORIGIN", "https://admin-lumora.vercel.app").rstrip("/"),
 ]
 
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r'^https://.*\.vercel\.app$',
-    r'^https://.*\.railway\.app$',
-    r'^https://.*\.up\.railway\.app$',
-]
+CORS_ORIGIN_WHITELIST = LOCAL_ORIGINS + DEPLOYED_FRONTEND_ORIGINS
+CORS_ALLOWED_ORIGINS = LOCAL_ORIGINS + DEPLOYED_FRONTEND_ORIGINS
+CORS_ALLOWED_ORIGIN_REGEXES = []
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:8000",
-    "https://lumoraapp.vercel.app",
-    "https://admin-lumora.vercel.app",
-    "https://lumora-backend.up.railway.app",
-]
+CSRF_TRUSTED_ORIGINS = LOCAL_ORIGINS + DEPLOYED_FRONTEND_ORIGINS
 
 
 # Database
